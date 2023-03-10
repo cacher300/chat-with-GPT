@@ -13,21 +13,23 @@ client = Client(account_sid, auth_token)
 # set up OpenAI API credentials
 openai.api_key = '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'
 
-# define function to generate response using GPT-3
+#This is the part of code that generates the response
 def generate_response(message):
     response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[{"role": "user", "content": str(message)}],
     )
+    #json converson
     completion = str(response)
 
     data = json.loads(completion)
 
-# Extract the cover letter content from the first choice message
     content = data['choices'][0]['message']['content']
     return content
 
-# define function to handle incoming SMS messages
+# Message takes the text and the resto of the code passes it to the copletion function
+#completion function completes it that twillo sends it to the website'
+
 def handle_sms(request):
     message = request.form['Body']
     response = generate_response(message)
@@ -38,7 +40,7 @@ def handle_sms(request):
 # set up Flask app
 app = Flask(__name__)
 
-# set up Twilio webhook to handle incoming SMS messages
+#the wbbhook has the contents of the response
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_reply():
     return handle_sms(request)
